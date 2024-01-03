@@ -1,0 +1,60 @@
+ping google.com
+pacman -Syy
+ls /sys/firmware/efi/efivars
+fdisk -l
+fdisk <disk> g n +500m t 1 n rest t 44 (lvm)
+pvcreate <part>
+vgcreate <name> <part>
+lvcreate -l(for %) 100%FREE <vg> -n <name>
+modprobe dm_mod
+vgscan 
+vgchange -ay
+mkfs.ext4 /dev/<vg>/<lv>
+mount /dev/<vg>/<lv> /mnt 
+mkdir /mnt/etc 
+genfstab -U -p /mnt >> /mnt/etc/fstab
+cp /mnt/etc/fstab /mnt/etc/fstab.bak
+cat /mnt/etc/fstab
+pacstrap -i /mnt base base-devel linux linux-headers linux-firmware linux-lts linux-lts-headers linux-lts-firmware vim openssh ranger htop neofetch git networkmanager wpa_supplicant wireless_tools netctl dialog iwd lvm2 grub dosfstools mtools efibootmgr os-prober
+arch-chroot /mnt
+vim /etc/pacman.conf, ILoveCandy, colour, parallel downloads, multilib
+systemctl enable sshd
+systemctl enable NetworkManager
+vim /etc/mkinitcpio.conf HOOKS=(...block lvm2 filesystems...)
+mkinitcpio -p linux
+mkinitcpio -p linux-lts
+vim /etc/locale.gen uncomment 
+locale-gen 
+passwd
+useradd -mg users -G wheel <user>
+passwd <user>
+EDITOR=vim visudo uncomment %wheel ALL=(ALL) ALL 
+mkdir /boot/EFI
+mkfs.fat -F32 /dev/disk1
+mount /dev/disk1 /boot/EFI
+grub-install --target=x86_64-efi --bootloader-id=arch_btw --recheck /dev/disk(nopart) (BIOS --target=i386-pc && no id targer)
+mkdir /boot/grub/locale
+cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo
+grub-mkconfig -o /boot/grub/grub.cfg
+reboot su
+dd if=/dev/zero of=/swapfile bs=1M count=8192  status=progress
+chmod 600 /swapfile
+mkswap /swapfile
+echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
+cat /etc/fstab
+mount -a
+swapon -a 
+timedatectl list-timezones
+timedatectl set-timezone Asia/Kolkata
+systemctl enable systemd-timesyncd
+hostnamectl set-hostname <hostname> alokesh?
+vim /etc/hosts 127.0.0.1 localhost \n 127.0.1.1 <hostname>
+pacman -S amd-ucode xorg nvidia nvidia-lts mesa fish wget thefuck starship firefox sddm exa bat sxiv unzip zip rar mpv emacs keepasssxc nextcloud-client tailscale cowsay sl fortune-mod lolcat asciiquarium noto-font-emoji
+
+(vm: virtualbox-guest-utils xf86-video-vmware systemctl enable vboxservice)
+yay -S ttf-fantasque-sans-mono tdrop shell-color-scripts
+chsh /bin/fish
+pacman -S lxappearance qt5ct alacritty rofi awesome pipewire pavucontrol pipewire-jack pcmanfm dunst picom feh lxsession picom flameshot pipewire-alsa pipewire-pulse ttf-jetbrains-mono
+
+systemctl enable sddm
+timedatectl set-local-rtc 1 --adjust-system-clock
